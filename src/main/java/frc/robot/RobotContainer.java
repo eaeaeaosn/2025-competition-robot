@@ -12,19 +12,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.*;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.auto.basics.AutoActions;
-import frc.robot.commands.ElevatorZeroingCommand;
+import frc.robot.commands.ClimberInitiateCommand;
 import frc.robot.commands.RumbleCommand;
 import frc.robot.display.Display;
 import frc.robot.subsystems.apriltagvision.AprilTagVision;
 import frc.robot.subsystems.apriltagvision.AprilTagVisionIONorthstar;
-import frc.robot.subsystems.beambreak.BeambreakIOReal;
 import frc.robot.subsystems.climber.ClimberIOReal;
 import frc.robot.subsystems.climber.ClimberSubsystem;
-import frc.robot.subsystems.elevator.ElevatorIOReal;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.endeffector.EndEffectorIOReal;
-import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.utils.AllianceFlipUtil;
 import lombok.Getter;
@@ -35,9 +31,6 @@ import java.io.IOException;
 import java.util.function.BooleanSupplier;
 
 import static edu.wpi.first.units.Units.Seconds;
-import static frc.robot.RobotConstants.BeamBreakConstants.ENDEFFECTOR_EDGE_BEAMBREAK_ID;
-import static frc.robot.RobotConstants.BeamBreakConstants.ENDEFFECTOR_MIDDLE_BEAMBREAK_ID;
-import static frc.robot.RobotConstants.ElevatorConstants.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -61,8 +54,8 @@ public class RobotContainer {
             new AprilTagVisionIONorthstar(this::getAprilTagLayoutType, 1));
     Swerve swerve = Swerve.getInstance();
     Display display = Display.getInstance();
-    ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOReal());
-    EndEffectorSubsystem endEffectorSubsystem = new EndEffectorSubsystem(new EndEffectorIOReal(), new BeambreakIOReal(ENDEFFECTOR_MIDDLE_BEAMBREAK_ID), new BeambreakIOReal(ENDEFFECTOR_EDGE_BEAMBREAK_ID));
+    //ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOReal());
+    //EndEffectorSubsystem endEffectorSubsystem = new EndEffectorSubsystem(new EndEffectorIOReal(), new BeambreakIOReal(ENDEFFECTOR_MIDDLE_BEAMBREAK_ID), new BeambreakIOReal(ENDEFFECTOR_EDGE_BEAMBREAK_ID));
     ClimberSubsystem  climberSubsystem = new ClimberSubsystem(new ClimberIOReal());
 
     /**
@@ -77,6 +70,8 @@ public class RobotContainer {
         configureOperatorBindings(operatorController);
         configureTesterBindings(testerController);
         configureStreamDeckBindings(streamDeckController);
+        new Trigger(RobotController::getUserButton).onTrue(new ClimberInitiateCommand(climberSubsystem).until(() -> !RobotController.getUserButton()));
+
     }
 
     /**
@@ -141,11 +136,11 @@ public class RobotContainer {
         // new Trigger(controller.start())
         //         .onTrue(superstructure.setWantedSuperStateCommand(Superstructure.WantedSuperState.STOPPED));
         //test of elevator heights
-        controller.a().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(L1_EXTENSION_METERS.get()), elevatorSubsystem).until(() -> elevatorSubsystem.isAtSetpoint(L1_EXTENSION_METERS.get())));
-        controller.b().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(L2_EXTENSION_METERS.get()), elevatorSubsystem).until(() -> elevatorSubsystem.isAtSetpoint(L2_EXTENSION_METERS.get())));
-        controller.x().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(L3_EXTENSION_METERS.get()), elevatorSubsystem).until(() -> elevatorSubsystem.isAtSetpoint(L3_EXTENSION_METERS.get())));
-        controller.y().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(L4_EXTENSION_METERS.get()), elevatorSubsystem).until(() -> elevatorSubsystem.isAtSetpoint(L4_EXTENSION_METERS.get())));
-        controller.povDown().onTrue(new ElevatorZeroingCommand(elevatorSubsystem));
+//        controller.a().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(L1_EXTENSION_METERS.get()), elevatorSubsystem).until(() -> elevatorSubsystem.isAtSetpoint(L1_EXTENSION_METERS.get())));
+//        controller.b().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(L2_EXTENSION_METERS.get()), elevatorSubsystem).until(() -> elevatorSubsystem.isAtSetpoint(L2_EXTENSION_METERS.get())));
+//        controller.x().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(L3_EXTENSION_METERS.get()), elevatorSubsystem).until(() -> elevatorSubsystem.isAtSetpoint(L3_EXTENSION_METERS.get())));
+//        controller.y().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(L4_EXTENSION_METERS.get()), elevatorSubsystem).until(() -> elevatorSubsystem.isAtSetpoint(L4_EXTENSION_METERS.get())));
+//        controller.povDown().onTrue(new ElevatorZeroingCommand(elevatorSubsystem));
 
         controller.start().onTrue(Commands.runOnce(() -> climberSubsystem.resetPosition()));
         controller.leftBumper().onTrue(Commands.runOnce(() -> climberSubsystem.setWantedState(ClimberSubsystem.WantedState.CLIMB)));

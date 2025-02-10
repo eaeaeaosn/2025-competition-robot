@@ -35,6 +35,9 @@ public class ClimberSubsystem extends SubsystemBase{
             systemState = SystemState.DEPLOYING;
             io.resetPosition();
         }
+        else{
+            setBrake();
+        }
 
         switch (systemState) {
             case DEPLOYING:
@@ -67,4 +70,14 @@ public class ClimberSubsystem extends SubsystemBase{
     public void resetPosition() {
         io.resetPosition();
     }
+
+    public void setCoast() {
+        io.setCoast();
+    }
+
+    public void setBrake() {
+        io.setBrake();
+    }
+
+
 }

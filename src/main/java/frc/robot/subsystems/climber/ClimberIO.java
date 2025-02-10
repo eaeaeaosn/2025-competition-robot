@@ -28,4 +28,8 @@ public interface ClimberIO {
     default void setTargetPosition(double targetPositionDeg) {}
 
     default void resetPosition() {}
+
+    default void setCoast() {}
+
+    default void setBrake() {}
 }

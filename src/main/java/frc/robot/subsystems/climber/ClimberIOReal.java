@@ -107,4 +107,15 @@ public class ClimberIOReal implements ClimberIO {
     public void resetPosition() {
         motor.setPosition(0.0);
     }
+
+    @Override
+    public void setCoast() {
+        motor.setNeutralMode(NeutralModeValue.Coast);
+    }
+    @Override
+    public void setBrake() {
+        motor.setNeutralMode(NeutralModeValue.Brake);
+    }
+
+
 }
